@@ -1,8 +1,10 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Dimensions } from 'react-native';
-import React, { useState } from 'react';
+import React, { use, useState, useContext } from 'react';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Image } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../context/auth.js';
 
 const SignUp = ({navigation}) => {
     const [name, setName] = useState("");
@@ -10,6 +12,7 @@ const SignUp = ({navigation}) => {
     const [password, setPassword] = useState("");
     const [roomno, setRoomno] = useState("");
     const [block, setBlock] = useState("");
+    const [state,setState]=useContext(AuthContext);
 
     const handleSubmit = async () => {
         if (name === '' || email === '' || password === '' || roomno.length > 4 || block.length !== 1) {
@@ -19,8 +22,12 @@ const SignUp = ({navigation}) => {
         const resp = await axios.post("https://cleanit-backs.onrender.com/api/signup", { name, email, password, roomno, block });
         if(resp.data.error)
             alert(resp.data.error)
-        else
+        else{
+            setState(resp.data);
+            await AsyncStorage.setItem("auth-rn",JSON.stringify(resp.data));
             alert("Sign Up Successful");
+            navigation.navigate("Home");
+        }        
     };
 
     return (
