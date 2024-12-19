@@ -1,7 +1,8 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import React, { useState } from 'react';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Image } from 'react-native';
+import axios from 'axios';
 
 const SignUp = ({navigation}) => {
     const [name, setName] = useState("");
@@ -15,105 +16,138 @@ const SignUp = ({navigation}) => {
             alert("Please ensure all fields meet the required constraints.");
             return;
         }
-        await axios.post("http://localhost:8001/api/signup", { name, email, password, roomno, block });
-        alert("Sign Up Successful");
+        const resp = await axios.post("https://cleanit-backs.onrender.com/api/signup", { name, email, password, roomno, block });
+        if(resp.data.error)
+            alert(resp.data.error)
+        else
+            alert("Sign Up Successful");
     };
 
     return (
+        // Changed to enableOnAndroid and extraScrollHeight for better scrolling
         <KeyboardAwareScrollView 
-            contentContainerStyle={{ ...styles.container, flexGrow: 1 }} // Add flexGrow for scroll
+            enableOnAndroid
+            extraScrollHeight={20}
+            contentContainerStyle={styles.scrollViewContent}
         >
-            <View style={{ marginVertical: 100 }}>
+            <View style={styles.container}>
                 <View style={styles.imageContainer}>
                     <Image source={require("../public/final-image.jpg")} style={styles.imageStyles} />
                 </View>
-                <Text style={styles.signupText}>SignUp</Text>
-                <View style={{ marginHorizontal: 24 }}>
-                    <Text style={{ fontSize: 16, color: '#2c3e50' }}>NAME</Text>
-                    <TextInput style={styles.signupInput} value={name} onChangeText={text => setName(text)} autoCapitalize="words" autoCorrect={false} />
-                </View>
-                <View style={{ marginHorizontal: 24 }}>
-                    <Text style={{ fontSize: 16, color: '#2c3e50' }}>EMAIL</Text>
-                    <TextInput style={styles.signupInput} value={email} onChangeText={text => setEmail(text)} autoCompleteType="email" keyboardType="email-address" />
-                </View>
-                <View style={{ marginHorizontal: 24 }}>
-                    <Text style={{ fontSize: 16, color: '#2c3e50' }}>PASSWORD</Text>
-                    <TextInput style={styles.signupInput} value={password} onChangeText={text => setPassword(text)} secureTextEntry={true} autoComplteType="password" />
-                </View>
-                <View style={{ marginHorizontal: 24 }}>
-                    <Text style={{ fontSize: 16, color: '#2c3e50' }}>ROOM NUMBER</Text>
-                    <TextInput 
-                        style={styles.signupInput} 
+                <Text style={styles.signupText}>Sign Up</Text>
+                {/* Added a wrapper for input fields for consistent spacing */}
+                <View style={styles.inputWrapper}>
+                    <InputField label="NAME" value={name} onChangeText={setName} autoCapitalize="words" autoCorrect={false} />
+                    <InputField label="EMAIL" value={email} onChangeText={setEmail} autoCompleteType="email" keyboardType="email-address" />
+                    <InputField label="PASSWORD" value={password} onChangeText={setPassword} secureTextEntry={true} autoComplteType="password" />
+                    <InputField 
+                        label="ROOM NUMBER" 
                         value={roomno} 
-                        onChangeText={text => {
-                            if (/^\d{0,4}$/.test(text)) setRoomno(text); // Only allow up to 4 digits
-                        }} 
-                        keyboardType="numeric" // Set to numeric
+                        onChangeText={(text) => {
+                            if (/^\d{0,4}$/.test(text)) setRoomno(text);
+                        }}
+                        keyboardType="numeric"
                     />
-                </View>
-                <View style={{ marginHorizontal: 24 }}>
-                    <Text style={{ fontSize: 16, color: '#2c3e50' }}>BLOCK</Text>
-                    <TextInput 
-                        style={styles.signupInput} 
+                    <InputField 
+                        label="BLOCK" 
                         value={block} 
-                        onChangeText={text => {
-                            if (text.length <= 1) setBlock(text); // Only allow one character
-                        }} 
+                        onChangeText={(text) => {
+                            if (text.length <= 1) setBlock(text);
+                        }}
                     />
                 </View>
                 
                 <TouchableOpacity onPress={handleSubmit} style={styles.buttonStyle}>
                     <Text style={styles.buttonText}>Submit</Text>
                 </TouchableOpacity>
-                <Text style={{ fontSize: 14, textAlign: 'center'}}>
-                        Already Joined?
-                        <Text style={{ color: 'darkred', fontweight: 'bold' }}
-                            onPress={()=>navigation.navigate("SignIn")}>Sign In</Text>
+                <Text style={styles.signInText}>
+                    Already Joined?{' '}
+                    <Text style={styles.signInLink} onPress={() => navigation.navigate("SignIn")}>
+                        Sign In
+                    </Text>
                 </Text>
             </View>
         </KeyboardAwareScrollView>
     );
 };
 
+// Created a reusable component for input fields
+const InputField = ({ label, ...props }) => (
+    <View style={styles.inputField}>
+        <Text style={styles.inputLabel}>{label}</Text>
+        <TextInput style={styles.signupInput} {...props} />
+    </View>
+);
+
 const styles = StyleSheet.create({
+    // Added scrollViewContent style for better scrolling
+    scrollViewContent: {
+        flexGrow: 1,
+    },
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center', // Center content horizontally
-    },
-    signupText: {
-        fontSize: 30,
-        textAlign: 'center',
-    },
-    signupInput: {
-        borderBottomWidth: 0.5,
-        height: 48,
-        borderBottomColor: "#8e93a1",
-        marginBottom: 10,
-    },
-    buttonStyle: {
-        backgroundColor: "#008b8b",
-        height: 50,
-        marginBottom: 20,
-        justifyContent: "center",
-        marginHorizontal: 15,
-        borderRadius: 15,
-    },
-    buttonText: {
-        fontSize: 20,
-        textAlign: 'center',
-        color: '#fff',
-        textTransform: 'uppercase',
-        fontWeight: 'bold',
+        alignItems: 'center',
+        paddingVertical: 40, // Added vertical padding
     },
     imageContainer: {
-        alignItems: 'center', // Center image
+        alignItems: 'center',
         marginBottom: 20,
     },
     imageStyles: {
         width: 150,
         height: 150,
-        borderRadius: 15,
+        borderRadius: 75, // Changed to full circle
+    },
+    signupText: {
+        fontSize: 30,
+        textAlign: 'center',
+        marginBottom: 20, // Added margin
+        fontWeight: 'bold', // Made text bold
+    },
+    // Added inputWrapper for consistent spacing
+    inputWrapper: {
+        width: '100%',
+        paddingHorizontal: 24,
+    },
+    // Added inputField style
+    inputField: {
+        marginBottom: 15,
+    },
+    // Changed input label style
+    inputLabel: {
+        fontSize: 14,
+        color: '#2c3e50',
+        marginBottom: 5,
+    },
+    signupInput: {
+        borderBottomWidth: 1, // Increased border width
+        height: 48,
+        borderBottomColor: "#8e93a1",
+    },
+    buttonStyle: {
+        backgroundColor: "#008b8b",
+        height: 50,
+        marginVertical: 20, // Changed to vertical margin
+        justifyContent: "center",
+        width: '90%', // Set width relative to screen
+        borderRadius: 25, // Increased border radius
+    },
+    buttonText: {
+        fontSize: 18, // Slightly reduced font size
+        textAlign: 'center',
+        color: '#fff',
+        textTransform: 'uppercase',
+        fontWeight: 'bold',
+    },
+    // Added styles for sign in text and link
+    signInText: {
+        fontSize: 14,
+        textAlign: 'center',
+    },
+    signInLink: {
+        color: 'darkred',
+        fontWeight: 'bold',
     },
 });
 
