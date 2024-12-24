@@ -1,12 +1,43 @@
 import React from 'react';
 import { StyleSheet, Text, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
 
-const Home = () => {
+const Home = ({ navigation }) => {
+  const handleCleanRequest = async () => {
+    try {
+      const response = await axios.post("https://cleanit-backs.onrender.com/api/cleaningrequest" );
+      if (response.data.success) {
+        alert("Clean Request Submitted Successfully!");
+        navigation.navigate("Status", { type: "cleaning" }); // Example navigation
+      } else {
+        alert(response.data.error || "Something went wrong");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit the clean request");
+    }
+  };
+
+  const handleMaintenanceRequest = async () => {
+    try {
+      const response = await axios.post("https://cleanit-backs.onrender.com/api/maintaingrequest"  );
+      if (response.data.success) {
+        alert("Maintenance Request Submitted Successfully!");
+        navigation.navigate("Status", { type: "maintenance" }); // Example navigation
+      } else {
+        alert(response.data.error || "Something went wrong");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit the maintenance request");
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleCleanRequest}>
           <LinearGradient
             colors={['#0C1222', '#008A90']}
             style={[styles.button, styles.buttonShadow]}
@@ -15,7 +46,7 @@ const Home = () => {
           </LinearGradient>
         </TouchableOpacity>
         
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleMaintenanceRequest}>
           <LinearGradient
             colors={['#008A90', '#0C1222']}
             style={[styles.button, styles.buttonShadow]}
