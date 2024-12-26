@@ -21,7 +21,7 @@ const Home = ({ navigation }) => {
 
   const handleMaintenanceRequest = async () => {
     try {
-      const response = await axios.post("https://cleanit-backs.onrender.com/api/maintaingrequest"  );
+      const response = await axios.post("https://cleanit-backs.onrender.com/api/maintaingrequest" {type: "maintenance"} );
       if (response.data.success) {
         alert("Maintenance Request Submitted Successfully!");
         navigation.navigate("Status", { type: "maintenance" }); // Example navigation
