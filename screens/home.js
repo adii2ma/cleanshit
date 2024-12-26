@@ -6,7 +6,7 @@ import axios from 'axios';
 const Home = ({ navigation }) => {
   const handleCleanRequest = async () => {
     try {
-      const response = await axios.post("https://cleanit-backs.onrender.com/api/cleaningrequest" );
+      const response = await axios.post("https://cleanit-backs.onrender.com/api/request", {type: "cleaning"});
       if (response.data.success) {
         alert("Clean Request Submitted Successfully!");
         navigation.navigate("Status", { type: "cleaning" }); // Example navigation
@@ -21,7 +21,7 @@ const Home = ({ navigation }) => {
 
   const handleMaintenanceRequest = async () => {
     try {
-      const response = await axios.post("https://cleanit-backs.onrender.com/api/maintaingrequest" {type: "maintenance"} );
+      const response = await axios.post("https://cleanit-backs.onrender.com/request", {type: "maintenance"} );
       if (response.data.success) {
         alert("Maintenance Request Submitted Successfully!");
         navigation.navigate("Status", { type: "maintenance" }); // Example navigation
