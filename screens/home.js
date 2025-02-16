@@ -3,12 +3,14 @@ import { StyleSheet, Text, SafeAreaView, TouchableOpacity, View } from 'react-na
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
 
+
 const Home = ({ navigation }) => {
   const handleCleanRequest = async () => {
     try {
       const response = await axios.post("https://cleanit-backs.onrender.com/api/request", {type: "Cleaning"});
       if (response.data.success) {
         alert("Clean Request Submitted Successfully!");
+        navigation.navigate("CleaningScreen");
         
       } else {
         alert(response.data.error || "Something went wrong");

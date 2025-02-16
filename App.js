@@ -2,6 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import SignUp from './screens/SignUp';
+import CleaningScreen from "./screens/cleaning.js";
 import SignIn from './screens/SignIn';
 import { AuthProvider } from './context/auth.js';
 import Home from './screens/home';
@@ -15,6 +16,7 @@ export default function App() {
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="SignIn" component={SignIn} />
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="CleaningScreen" component ={CleaningScreen}/>
         </Stack.Navigator>
       </AuthProvider>
     </NavigationContainer>
