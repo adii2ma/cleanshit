@@ -29,7 +29,7 @@ const SignIn = ({navigation}) => {
     };
 
     return (
-        // Changed to enableOnAndroid and extraScrollHeight for better scrolling
+         
         <KeyboardAwareScrollView 
             enableOnAndroid
             extraScrollHeight={20}
