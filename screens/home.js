@@ -19,7 +19,7 @@ const Home = ({ navigation }) => {
       console.error(error);
       alert("Failed to submit the clean request");
     }
-  };
+  };    
 
   const handleMaintenanceRequest = async () => {
     try {
